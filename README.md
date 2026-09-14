@@ -29,7 +29,7 @@ Optional flags anywhere in the task line:
 | `--merge` | Allow finishing option 1, local merge to the base branch. Off by default. |
 | `--no-pr` | Finish by keeping the pushed branch instead of opening a PR. |
 | `--budget small\|medium\|large` | Passed to superpowers' Model Selection as a bias. Small tiers every role down one step. Large tiers design and review up one step. |
-| `--decider fable|opus|sonnet|haiku|inherit` | Model that makes the rulings. Default `fable`, independent of your session model. |
+| `--decider fable\|opus\|sonnet\|haiku\|inherit` | Model that makes the rulings. Default `fable`, independent of your session model. |
 | `--ask-on "<decision>"` | Name one decision the proxy must not rule on. Reaching it ends the handoff with a report. |
 
 `/handoff off` ends an active handoff early. Work is committed as WIP, never discarded.
