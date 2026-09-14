@@ -26,7 +26,7 @@ escape_for_json() {
 }
 
 charter_escaped=$(escape_for_json "$charter")
-context="<HANDOFF_ACTIVE>\nA /handoff is in progress and the human is not in the room. Context was just compacted or resumed. Before doing anything else: invoke the handoff skill with the Skill tool, read its references/rulings.md, then read the decision log named in the charter below and continue from Current step. Superpowers gates are answered by rulings, not by asking the human, until the task ends or the user sends a message.\n\n${charter_escaped}\n</HANDOFF_ACTIVE>"
+context="<HANDOFF_ACTIVE>\nA /handoff is in progress and the human is not in the room. Context was just compacted or resumed. Before doing anything else: invoke the handoff skill with the Skill tool, read its references/rulings.md, then read the decision log named in the charter below and continue from Current step. Superpowers gates are answered by dispatching the handoff-proxy agent, not by asking the human, until the task ends or the user sends a message.\n\n${charter_escaped}\n</HANDOFF_ACTIVE>"
 
 printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$context"
 exit 0

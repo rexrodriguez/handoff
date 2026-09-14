@@ -23,7 +23,7 @@ One line per gate, in order. Shape is superpowers' own.
 
 ## Design review
 
-Reviewer: handoff-proxy-reviewer. Rounds: <n>. Verdict: <APPROVE | REVISE x2 then ruled>.
+Decider: handoff-proxy on <model>. Rounds: <n>. Verdict: <APPROVE | REVISE x2 then ruled>.
 Unresolved objections, if any:
 
 ## Execution ledger mirror

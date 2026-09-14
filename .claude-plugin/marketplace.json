@@ -6,7 +6,7 @@
       "name": "handoff",
       "source": "./",
       "description": "Proxy approvals for superpowers when the human is away.",
-      "version": "0.1.0"
+      "version": "0.2.0"
     }
   ]
 }

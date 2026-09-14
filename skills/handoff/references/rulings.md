@@ -1,6 +1,8 @@
 # Rulings
 
-One entry per place a superpowers skill stops for the human. Each says what the human would normally decide, how you decide it instead, and what to log. If a gate is not listed here, the default ruling applies: take the most reversible option that matches existing repo conventions, log it with the cost if wrong, and continue.
+One entry per place a superpowers skill stops for the human. Each says what the human would normally decide, what evidence the controller gathers, and how the `handoff-proxy` agent is expected to rule. The controller builds the gate packet and dispatches the proxy. The proxy decides. Gates marked **no dispatch** are answered by the controller directly because there is nothing to judge.
+
+If a gate is not listed here, the default ruling applies. The controller sends a DECIDE packet with this file's default rule pasted in: take the most reversible option that matches existing repo conventions, log it with the cost if wrong, and continue.
 
 Every logged ruling uses superpowers' own shape:
 
@@ -13,12 +15,12 @@ Ruling: <what you decided> — <why> — <what it costs if wrong>
 ### Gate: classify spike, bounded, or architectural
 
 Human role: override the classification.
-Ruling: classify per the skill's definitions. When in doubt take the heavier path, exactly as the skill says. Log the classification and the one fact that decided it.
+Ruling: **no dispatch.** Classify per the skill's definitions. When in doubt take the heavier path, exactly as the skill says. Log the classification and the one fact that decided it.
 
 ### Gate: clarifying questions, one at a time
 
 Human role: answer them.
-Ruling: write each question down, then answer it yourself in this order.
+Ruling: write every question down, gather what you can for each from the sources below, then send them all in one DECIDE packet. The proxy answers in this order.
 
 1. **From the repo.** Read code, tests, docs, recent commits, and any CLAUDE.md. Most questions about conventions, naming, placement, and existing behavior are answerable here. Cite the file.
 2. **From the task line.** Re-read the charter. The user often already answered it.
@@ -31,22 +33,22 @@ Log every question and its answer with which of the five sources decided it.
 ### Gate: propose 2 to 3 approaches with a recommendation
 
 Human role: pick one.
-Ruling: pick your own recommendation. The skill already requires you to recommend, so the ruling is only to act on it. If two approaches are close, prefer the one with the smaller blast radius and fewer new files. Log the approaches considered in one line each and why the pick won.
+Ruling: send the approaches, trade-offs, and your recommendation in a DECIDE packet. The proxy picks. If two approaches are close, prefer the one with the smaller blast radius and fewer new files. Log the approaches considered in one line each and why the pick won.
 
 ### Gate: present design and get approval, per section for architectural work
 
 Human role: approve or push back.
-Ruling: dispatch `handoff-proxy-reviewer` with the design. It reads the repo and returns APPROVE or REVISE with specific objections. On REVISE, address the objections and re-dispatch once. After two REVISE rounds, decide yourself, log the unresolved objections, and continue. Never approve your own design without the reviewer.
+Ruling: send a REVIEW packet with the design. The proxy reads the repo and returns APPROVE or REVISE with specific objections. On REVISE, address the objections and re-dispatch once. After two REVISE rounds, send a DECIDE packet with the remaining objections and the proxy settles it. Log whatever stays unresolved. Never approve your own design.
 
 ### Gate: user reviews written spec
 
 Human role: read the spec file before implementation.
-Ruling: run the skill's spec self-review, then dispatch `handoff-proxy-reviewer` against the spec file with the same APPROVE or REVISE contract. Log the verdict.
+Ruling: run the skill's spec self-review, then send a REVIEW packet with the spec file path, same contract as the design gate. Log the verdict.
 
 ### Gate: visual companion offer
 
 Human role: accept or decline the browser tab.
-Ruling: decline. There is nobody to look at it. Log nothing.
+Ruling: **no dispatch.** Decline. There is nobody to look at it. Log nothing.
 
 ## writing-plans
 
@@ -57,7 +59,7 @@ No human gate. Runs as written.
 ### Gate: raise plan concerns with the human before starting
 
 Human role: resolve concerns.
-Ruling: resolve each concern yourself. A concern that changes the plan's tasks gets fixed in the plan file and committed. A concern that changes the design goes back to the design gate above, one round only. Log each concern and its resolution.
+Ruling: gather all concerns and send one DECIDE packet. A resolution that changes the plan's tasks gets fixed in the plan file and committed. A concern that changes the design goes back to the design gate above, one round only. Log each concern and its resolution.
 
 ### Gate: the four stop reasons
 
@@ -95,7 +97,7 @@ No human gate during a handoff. Final reviewer findings are handled by subagent-
 ### Gate: the options menu
 
 Human role: choose merge locally, push and open a PR, or keep the branch.
-Ruling, in order:
+Ruling: send a DECIDE packet with the menu, the status, and the flags. The proxy applies this order:
 
 1. Status BLOCKED or PAUSED: option 3, keep the branch. Push it if a remote exists so the work is not only local.
 2. `--no-pr` set: option 3, keep the branch, pushed.
@@ -108,8 +110,8 @@ Log the option chosen and why.
 
 ### Gate: discard the work
 
-Never. Discarding happens only when the human asks in person.
+**No dispatch.** Never. Discarding happens only when the human asks in person.
 
 ## Anything else
 
-A gate not listed here is answered by the default ruling at the top of this file. Add it to this file afterward so the next handoff has a rule, which is the `superpowers:writing-skills` way of encoding a lesson.
+A gate not listed here goes to the proxy as a DECIDE packet carrying the default ruling from the top of this file. Add it to this file afterward so the next handoff has a rule, which is the `superpowers:writing-skills` way of encoding a lesson.

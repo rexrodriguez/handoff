@@ -2,14 +2,14 @@
 
 A companion plugin for [superpowers](https://github.com/obra/superpowers). It stands in for you at every point where superpowers would stop and ask, so you can hand a task to the agent and read the result later.
 
-Superpowers is unchanged. Brainstorming, writing-plans, subagent-driven-development, TDD, verification, code review, and finishing all run exactly as written, including superpowers' own model selection. What changes is who answers when a skill says "get approval", "ask your human partner", or "which option?". During a handoff, that is the agent, following a fixed set of rulings, and every ruling is logged.
+Superpowers is unchanged. Brainstorming, writing-plans, subagent-driven-development, TDD, verification, code review, and finishing all run exactly as written, including superpowers' own model selection. What changes is who answers when a skill says "get approval", "ask your human partner", or "which option?". During a handoff, a read-only proxy agent on Fable answers, following a fixed set of rulings, and every ruling is logged.
 
 ## Install
 
 Requires superpowers to be installed first.
 
 ```bash
-claude plugin marketplace add <path-or-github-url-of-this-folder>
+claude plugin marketplace add rexrodriguez/handoff
 ```
 
 ```bash
@@ -29,7 +29,8 @@ Optional flags anywhere in the task line:
 | `--merge` | Allow finishing option 1, local merge to the base branch. Off by default. |
 | `--no-pr` | Finish by keeping the pushed branch instead of opening a PR. |
 | `--budget small\|medium\|large` | Passed to superpowers' Model Selection as a bias. Small tiers every role down one step. Large tiers design and review up one step. |
-| `--ask-on "<decision>"` | Name one decision the agent must not rule on. Reaching it ends the handoff with a report. |
+| `--decider fable|opus|sonnet|haiku|inherit` | Model that makes the rulings. Default `fable`, independent of your session model. |
+| `--ask-on "<decision>"` | Name one decision the proxy must not rule on. Reaching it ends the handoff with a report. |
 
 `/handoff off` ends an active handoff early. Work is committed as WIP, never discarded.
 
@@ -45,7 +46,7 @@ Superpowers' four hard stops are never proxied: irreversible or destructive oper
 
 ## How the rulings work
 
-`skills/handoff/references/rulings.md` lists each superpowers gate and the rule that replaces you. Clarifying questions are answered from the repo first, then the task line, then by running an experiment, then by repo convention, and only last by a conservative product default that gets flagged in the report. Design and spec approval are given by a read-only reviewer agent pinned to Fable that returns APPROVE or REVISE with cited objections. The finishing menu defaults to push and open a PR.
+`skills/handoff/references/rulings.md` lists each superpowers gate and the rule that replaces you. Clarifying questions are answered from the repo first, then the task line, then by running an experiment, then by repo convention, and only last by a conservative product default that gets flagged in the report. The controller gathers the evidence and options into a gate packet and hands it to the read-only `handoff-proxy` agent, which makes the ruling. Design and spec approval use the same agent in review mode, returning APPROVE or REVISE with cited objections. The finishing menu defaults to push and open a PR.
 
 A gate with no listed rule gets the default: the most reversible option that matches existing repo conventions, logged with its cost if wrong. Add the new rule to the file afterward.
 
@@ -55,7 +56,7 @@ A short charter marker at `.claude/handoff.active` records the task, flags, bran
 
 ## Which model makes the rulings
 
-The main session's model. Set `/model` before `/handoff`. Fable for the most judgment, Sonnet for the tightest budget. Implementers and reviewers are still tiered by superpowers' Model Selection regardless. The design and spec proxy reviewer is always Fable.
+Not your session model. Every ruling goes to the `handoff-proxy` agent, which runs on Fable by default no matter what `/model` is set to. So you can drive on Opus or Sonnet and still have Fable make the calls you would have made. The proxy is dispatched only at gates, roughly five to eight times per task, so the Fable cost is a small slice of the run. Change it per run with `--decider`, or make the proxy inherit the session model with `--decider inherit`. Implementers and reviewers are still tiered by superpowers' Model Selection regardless.
 
 ## Orchestrator mode
 
@@ -78,7 +79,7 @@ skills/handoff/references/rulings.md        one ruling per superpowers gate
 skills/handoff/references/charter.md        marker file format
 skills/handoff/references/log-template.md   decision log
 skills/handoff/references/report-template.md handback report
-agents/handoff-proxy-reviewer.md    Fable, read-only, APPROVE or REVISE
+agents/handoff-proxy.md             Fable, read-only, makes every ruling
 agents/handoff-orchestrator.md      optional, see Orchestrator mode
 hooks/hooks.json, hooks/session-start, hooks/run-hook.cmd   re-arm after compaction
 ```

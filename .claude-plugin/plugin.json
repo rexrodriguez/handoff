@@ -1,7 +1,7 @@
 {
   "name": "handoff",
   "description": "Stand in for the human at superpowers' approval gates when they are not in the room. One command hands a task to the agent, which classifies, designs, plans, executes, opens a PR, and leaves a decision log to review later.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": { "name": "Rex Rodriguez" },
   "license": "MIT",
   "keywords": ["superpowers", "autonomous", "handoff", "unattended", "proxy-approval"],
