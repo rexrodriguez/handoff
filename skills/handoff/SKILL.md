@@ -26,6 +26,8 @@ The `handoff-proxy` agent runs on Fable by default, regardless of the session mo
 
 The proxy is dispatched only at gates. Gathering evidence, dispatching implementers, running tests, writing the log, and everything else stays with you. Batch what you can: all clarifying questions in one packet, all plan concerns in one packet. A typical task needs five to eight proxy calls.
 
+**Same model, no round trip.** If the decider resolves to the model you are already running on, or is `inherit`, answer DECIDE gates yourself, inline, following the same rule text and logging the same ruling line. The proxy would reach the same answer from the same evidence. REVIEW gates always dispatch regardless of model. The value there is a reviewer that has not seen your reasoning, not a different model, which is the same reason superpowers dispatches a separate code reviewer.
+
 A gate packet contains:
 
 ```

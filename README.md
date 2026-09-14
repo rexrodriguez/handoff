@@ -56,7 +56,7 @@ A short charter marker at `.claude/handoff.active` records the task, flags, bran
 
 ## Which model makes the rulings
 
-Not your session model. Every ruling goes to the `handoff-proxy` agent, which runs on Fable by default no matter what `/model` is set to. So you can drive on Opus or Sonnet and still have Fable make the calls you would have made. The proxy is dispatched only at gates, roughly five to eight times per task, so the Fable cost is a small slice of the run. Change it per run with `--decider`, or make the proxy inherit the session model with `--decider inherit`. Implementers and reviewers are still tiered by superpowers' Model Selection regardless.
+Not your session model. Every ruling goes to the `handoff-proxy` agent, which runs on Fable by default no matter what `/model` is set to. So you can drive on Opus or Sonnet and still have Fable make the calls you would have made. The proxy is dispatched only at gates, roughly five to eight times per task, so the Fable cost is a small slice of the run. Change it per run with `--decider`, or make the proxy inherit the session model with `--decider inherit`. When the decider is the same model as your session, DECIDE gates are answered inline with no extra agent, and only design and spec review still go to the proxy, because a reviewer with fresh context catches what the author misses. Implementers and reviewers are still tiered by superpowers' Model Selection regardless.
 
 ## Orchestrator mode
 
